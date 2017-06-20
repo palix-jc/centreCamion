@@ -1,0 +1,35 @@
+camion arrive -> check sur "generateur de destination"
+	-> destination dispo -> recuperation -> check quai
+	-> destination non dispo -> attente
+
+check quai 
+	-> quai disponible -> chargement
+	-> quai non disponible -> attente
+
+check pesage
+	-> disponible -> pesage -> check meteo -> depart
+	-> pesage non disponible -> attente
+
+
+<!------->
+
+tab_destination : Paris, Lyon, Montepellier...
+random (effectue toute les 1 a 5 secondes) pour choisir une destination
+dest_en_cours : recupere la destination random
+Le camion recupere la premiere valeur de dest_en_cours puis supprime de dest_en_cours
+
+OU
+
+On genere une destination des qu'un camion le demande. Pas besoin de dest_en_cours
+
+<!------->
+
+tab_temps : Neige, Pluie, Soleil, Vent
+random (effectue toute les 4 secondes)
+meteo qui contient la meteo en cours
+
+<!------->
+
+le quai est un semaphore de 4
+pesage est un mutex
+pesage renvoie un nombre random (entre 1 000 et 5 000)
