@@ -5,17 +5,19 @@
 #include <semaphore.h>
 
 sem_t quai;
+char *meteo_now[1];
 
-pthread_cond_t condition_meteo = PTHREAD_COND_INITIALIZER; /* Création de la condition */
+pthread_cond_t condition_poids = PTHREAD_COND_INITIALIZER; /* Création de la condition */
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; /* Création du mutex */
 
 void *Meteo(void *arg){ //gere meteo
 
-    char *tab[5] = {"Neige", "Vent", "Soleil", "Brouillard", "Pluie"};
+    char *tab_meteo[5] = {"Neige", "Vent", "Soleil", "Brouillard", "Pluie"};
     srand(time(NULL)); //permet de vrai valeur aléatoire
     while(1)
     {
-        printf("Changement de la meteo pour : %s\n", tab[rand()%5]);
+        meteo_now[0] = tab_meteo[rand()%5];
+        printf("Changement de la meteo pour : %s\n", meteo_now[0]);
         sleep(4);
     }
     return 0;
@@ -39,17 +41,18 @@ void *Camion(void *arg){ // thread camion
 
     /* utilisation du mutex pesage */
     pthread_mutex_lock (&mutex); /* On verrouille le mutex */
-    pthread_cond_signal (&condition_meteo); /* On délivre le signal : condition remplie */
-    pthread_cond_wait(&condition_meteo, &mutex);
+    pthread_cond_signal (&condition_poids); /* On délivre le signal : condition remplie */
+    pthread_cond_wait(&condition_poids, &mutex);
 
         printf("pesage du camion %u en cours\n", (unsigned int)pthread_self());
             sleep(4);
         srand(time(NULL)); //pour l'aléatoire
 
         printf("    le camion %u pese %d Kg \n", (unsigned int)pthread_self(), (rand()%(5001)+1000));
+        printf("    meteo du camion %u : %s\n", (unsigned int)pthread_self(), meteo_now[0]);
         printf("    le camion %u part \n", (unsigned int)pthread_self());
 
-    pthread_cond_broadcast(&condition_meteo);
+    pthread_cond_broadcast(&condition_poids);
     pthread_mutex_unlock (&mutex); /* On déverrouille le mutex */
     /* fin d'utilisation du mutex pesage */
 
